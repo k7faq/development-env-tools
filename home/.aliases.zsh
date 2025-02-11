@@ -67,14 +67,6 @@ alias kgaas="kubectl get all --all-namespaces"
 alias kgpwide="kubectl get pods -o wide"
 alias kgpv="kubectl get pods -o=custom-columns=NAME:.metadata.name,CPU:.spec.containers[*].resources.requests.cpu,MEMORY:.spec.containers[*].resources.requests.memory,IMAGES:.spec.containers[*].image --sort-by=.spec.containers[*].resources.requests.cpu"
 
-kubectl () {
-    command kubectl $*
-    if [[ -z $KUBECTL_COMPLETE ]]
-    then
-        source <(command kubectl completion zsh)
-        KUBECTL_COMPLETE=1 
-    fi
-}
 
 alias tfi="terraform init"
 alias tfp="terraform fmt; terraform plan"
@@ -151,9 +143,23 @@ autoload -Uz compinit && compinit
 complete -C '/usr/local/bin/aws_completer' aws
 complete aws 'p/*/`aws_completer`/'
 
+# kubectl auto completion
+kubectl () {
+    command kubectl $*
+    if [[ -z $KUBECTL_COMPLETE ]]
+    then
+        source <(command kubectl completion zsh)
+        KUBECTL_COMPLETE=1 
+    fi
+}
+
+# helm auto completion
+helm completion zsh > "${fpath[1]}/_helm"
+
 # Azure CLI auto completion
 source /usr/local/etc/bash_completion.d/az
 
+# krew auto completion
 # https://krew.sigs.k8s.io/  Plugins for kubectl
 export PATH="${PATH}:${HOME}/.krew/bin"
 
